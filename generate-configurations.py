@@ -20,6 +20,7 @@ def rescale(atoms: Atoms, old_a: float, new_a: float) -> Atoms:
 
     atoms_copy = atoms.copy()
     atoms_copy.cell *= new_a / old_a
+    atoms_copy.positions *= new_a / old_a
 
     return atoms_copy
 
