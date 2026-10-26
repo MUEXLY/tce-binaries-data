@@ -27,8 +27,10 @@ configurations/
     TaW/
         1/
             configuration.xyz
+            configuration.dat
         2/
             configuration.xyz
+            configuration.dat
 ```
 
 and so on. For each of these configurations, you need to compute the fully relaxed potential energy using LAMMPS.
@@ -40,9 +42,11 @@ configurations/
     TaW/
         1/
             configuration.xyz
+            configuration.dat
             energy.txt
         2/
             configuration.xyz
+            configuration.dat
             energy.txt
 ```
 
