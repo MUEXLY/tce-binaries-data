@@ -54,6 +54,7 @@ def main():
         config_dir = CONFIGS_DIR / "TaW" / f"{i:0d}"
         config_dir.mkdir(exist_ok=True, parents=True)
         io.write(config_dir / "configuration.xyz", configuration)
+        io.write(config_dir / "configuration.dat", configuration, format="lammps-data", masses=True)
 
     for system in SYSTEMS[1:]:
 
