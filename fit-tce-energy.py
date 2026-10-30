@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LassoCV
+from xgboost import XGBRegressor
 import matplotlib.pyplot as plt
 
 
@@ -89,7 +90,7 @@ def main():
         models={
             "energy": Pipeline([
                 ("scale", StandardScaler(with_mean=False)),
-                ("fit", LassoCV(fit_intercept=False, max_iter=10_000))
+                ("fit", XGBRegressor(random_state=0))
             ])
         }
     )
