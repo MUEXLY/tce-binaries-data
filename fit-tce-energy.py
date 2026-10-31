@@ -81,12 +81,7 @@ def main():
     calc = TCECalculator(
         neighbor_cutoffs=CUTOFFS["bcc"][:5] * lattice_parameters["W"],
         species=ELEMENTS,
-        many_body_features=[
-            (0, 0, 1),
-            (0, 0, 2),
-            (1, 1, 2),
-            (2, 2, 2)
-        ],
+        many_body_features=[],
         models={
             "energy": Pipeline([
                 ("scale", StandardScaler(with_mean=False)),
