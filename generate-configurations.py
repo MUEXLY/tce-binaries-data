@@ -5,7 +5,6 @@ from ase import Atoms, io
 import numpy as np
 from tce.datasets import Dataset, PresetDataset
 
-
 SYSTEMS: list[tuple[str, str]] = [
     ("Ta", "W"),
     ("Ta", "V"),
