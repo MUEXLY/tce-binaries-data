@@ -56,7 +56,7 @@ def main():
                     
                     if len(real_freqs) > 0:
                         
-                        # NEW: Convert frequency values to Hz
+                        # NEW: Convert frequency values if needed
                         
                         # create histogram per configuration
                         plt.figure(figsize=(8, 5))
