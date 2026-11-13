@@ -2,9 +2,6 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
-from ase.io import read
-from ase.calculators.lammpslib import LAMMPSlib
-from ase.vibrations import Vibrations
 
 
 CONFIGS_DIR: Path = Path("configurations")
@@ -38,61 +35,52 @@ def main():
         # Loop through each individual configuration folder sorted numerically
         for config_dir in sorted(sys_dir.iterdir(), key=lambda d: int(d.name) if d.name.isdigit() else d.name):
             if config_dir.is_dir():
-                xyz_file = config_dir / "configuration.xyz"
-                if not xyz_file.exists():
+                # NEW: Look for dynmat.dat instead of configuration.xyz to avoid rerunning LAMMPS
+                dynmat_file = config_dir / "dynmat.dat"
+                if not dynmat_file.exists():
                     continue
                     
-                print(f"  -> Running configuration: {config_dir.name}")
+                print(f"  -> Reading dynmat.dat for configuration: {config_dir.name}")
                 
-                # Read the atomic structure from the configuration file
-                atoms = read(xyz_file)
-                
-                # Attach the LAMMPS calculator with the consistent 4-element global atom types
-                atoms.calc = LAMMPSlib(
-                    lmpcmds=LAMMPS_CMDS,
-                    atom_types=ATOM_TYPES,
-                    log_file=str(config_dir / "lammps.log")
-                )
-                
-                # Run vibrational analysis using ASE
-                vib = Vibrations(atoms, name=str(config_dir / "vib"))
                 try:
-                    vib.clean(empty_files=True, combined=False)
-                    vib.run()
-                    freqs = vib.get_frequencies()
+                    # NEW: Load and diagonalize the dynamical matrix directly from dynmat.dat
+                    dynmat_raw = np.loadtxt(dynmat_file)
+                    dynlen = int(3 * np.sqrt(len(dynmat_raw) / 3))
+                    dynmat = dynmat_raw.reshape((dynlen, dynlen))
                     
-                    if freqs is not None:
-                        # Convert to numpy array and filter for purely positive frequencies
-                        freqs_arr = np.asarray(freqs)
-                        real_mask = (freqs_arr.imag == 0) & (freqs_arr.real > 0)
-                        real_freqs = freqs_arr[real_mask].real.astype(float)
+                    eigvals, _ = np.linalg.eigh(dynmat)
+                    
+                    # Convert eigenvalues to real positive frequencies
+                    real_freqs = np.sqrt(np.abs(eigvals)) * np.sign(eigvals)
+                    real_freqs = real_freqs[real_freqs > 0].astype(float)
+                    
+                    if len(real_freqs) > 0:
                         
-                        if len(real_freqs) > 0:
-                            
-                            # create histogram per configuration
-                            plt.figure(figsize=(8, 5))
-                            
-                            # Calculate histogram data as well as axis offsets
-                            hist, bin_edges = np.histogram(real_freqs, bins=50, density=True)
-                            bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
-                            
-                            plt.plot(bin_centers, hist, color="tab:blue", linewidth=2)
-                            
-                            plt.xlabel(r"$\nu$ (cm^-1)", fontsize=12)
-                            plt.ylabel("Density of States (DOS)", fontsize=12)
-                            plt.title(f"Vibrational DOS - {sys_name} Config {config_dir.name}", fontsize=14)
-                            plt.grid(True, linestyle="--", alpha=0.6)
-                            
-                            # Save the plot directly inside the individual configuration folder
-                            output_path = config_dir / "vibrational_histogram.png"
-                            plt.savefig(output_path, dpi=300)
-                            plt.close()  # Close the plot figure to free up memory
+                        # NEW: Convert frequency values to Hz
                         
-                    vib.clean()
+                        # create histogram per configuration
+                        plt.figure(figsize=(8, 5))
+                        
+                        # Calculate histogram data as well as axis offsets
+                        hist, bin_edges = np.histogram(real_freqs, bins=50, density=True)
+                        bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
+                        
+                        plt.plot(bin_centers, hist, color="tab:blue", linewidth=2)
+                        
+                        plt.xlabel(r"$\nu$ (cm^-1)", fontsize=12)
+                        plt.ylabel("Density of States (DOS)", fontsize=12)
+                        plt.title(f"Vibrational DOS - {sys_name} Config {config_dir.name}", fontsize=14)
+                        plt.grid(True, linestyle="--", alpha=0.6)
+                        
+                        # Save the plot directly inside the individual configuration folder as a PDF
+                        output_path = config_dir / "vibrational_histogram.pdf"
+                        plt.savefig(output_path, format="pdf", dpi=300, bbox_inches="tight")
+                        plt.close()  # Close the plot figure to free up memory
+                        
                 except Exception as e:
                     print(f"[{sys_name}] Error in {config_dir.name}: {e}")
 
-    print("Individual histograms generated")
+    print("Individual PDF histograms generated from dynmat.dat")
 
 
 if __name__ == "__main__":
