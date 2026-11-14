@@ -13,7 +13,7 @@ read_data configuration.dat
 
 #(3) Definition of interatomic potential
 pair_style eam/alloy
-pair_coeff * * WTaCrV.eam.alloy.zbl Cr V
+pair_coeff * * WTaCrV.eam.alloy.zbl W Ta Cr V
 
 #(4) Functions
 
