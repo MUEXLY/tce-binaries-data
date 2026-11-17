@@ -12,8 +12,9 @@ atom_modify map array
 read_data configuration.dat
 
 #(3) Definition of interatomic potential
-pair_style eam/alloy
-pair_coeff * * WTaCrV.eam.alloy.zbl W Ta Cr V
+pair_style hybrid/overlay eam/fs tabgap
+pair_coeff * * eam/fs Cr-Ta-V-W.eam.fs Cr Ta V W
+pair_coeff * * tabgap Cr-Ta-V-W.tabgap Cr Ta V W
 
 #(4) Functions
 
