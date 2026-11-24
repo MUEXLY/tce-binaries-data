@@ -54,7 +54,7 @@ def main():
         config_dir = CONFIGS_DIR / "TaW" / f"{i:0d}"
         config_dir.mkdir(exist_ok=True, parents=True)
         io.write(config_dir / "configuration.xyz", configuration)
-        io.write(config_dir / "configuration.dat", configuration, format="lammps-data", masses=True)
+        io.write(config_dir / "configuration.dat", configuration, format="lammps-data", masses=True, specorder=["W", "Ta", "Cr", "V"])
 
     for system in SYSTEMS[1:]:
 
@@ -76,7 +76,7 @@ def main():
             config_dir = CONFIGS_DIR / "".join(system) / f"{i:0d}"
             config_dir.mkdir(exist_ok=True, parents=True)
             io.write(config_dir / "configuration.xyz", transmutated_config, format="extxyz")
-            io.write(config_dir / "configuration.dat", transmutated_config, format="lammps-data", masses=True)
+            io.write(config_dir / "configuration.dat", transmutated_config, format="lammps-data", masses=True, specorder=["W", "Ta", "Cr", "V"])
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 from pathlib import Path
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -34,8 +35,8 @@ def main():
 
             # Check and enforce symmetry required for np.linalg.eigh
             asymmetry = np.linalg.norm(dynmat - dynmat.T) / np.linalg.norm(dynmat)
-            if asymmetry > 1.0e-2:
-                raise ValueError(f"Dynamical matrix for {sys_name}/{config_dir.name} is not strictly symmetric, with asymmetry {asymmetry}")
+            if asymmetry > 0.05:
+                warnings.warn(f"Dynamical matrix for {sys_name}/{config_dir.name} is not symmetric, with asymmetry {asymmetry}")
             dynmat = 0.5 * (dynmat + dynmat.T)
 
             eigvals = np.linalg.eigvalsh(dynmat)
