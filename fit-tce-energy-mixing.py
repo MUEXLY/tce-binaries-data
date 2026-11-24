@@ -154,10 +154,10 @@ def main():
     plt.xlabel("actual mixing energy (eV / atom)")
     plt.ylabel("TCE mixing energy (eV / atom)")
     plt.legend()
-    plt.savefig("fitting/parity-energy.pdf")
+    plt.savefig("fitting/parity-energy-mixing.pdf")
 
     calc.train(configurations)
-    calc.save("fitting/tce-energy.pkl")
+    calc.save("fitting/tce-energy-mixing.pkl")
 
 
 if __name__ == "__main__":

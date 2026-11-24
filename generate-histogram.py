@@ -44,10 +44,16 @@ def main():
             # Check for acoustic modes (should be 3 near-zero frequencies due to translation)
             num_near_zero = np.sum(np.abs(eigvals) < 1e-3 * eigvals.mean())
             if num_near_zero != 3:
-                raise ValueError(f"Found {num_near_zero} near-zero eigenvalues (expected 3 acoustic modes).")
+                warnings.warn(f"Found {num_near_zero} near-zero eigenvalues (expected 3 acoustic modes).")
+
+            # remove acoustic modes
+            eigvals = eigvals[3:]
+            num_negative_eigenvals = np.sum(eigvals < 0.0)
+            if num_negative_eigenvals > 0:
+                warnings.warn(f"Found {num_negative_eigenvals} negative eigenvalues")
 
             # Convert eigenvalues to real frequencies in THz, then to cm^-1
-            freqs_thz = np.sqrt(eigvals[3:]) / (2.0 * np.pi)
+            freqs_thz = np.sqrt(eigvals) / (2.0 * np.pi)
             freqs_cm_inv = freqs_thz * THZ_TO_CM_INV
 
             # Filter out true negative (unstable) frequencies
