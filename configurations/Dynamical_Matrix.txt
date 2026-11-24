@@ -13,8 +13,8 @@ read_data configuration.dat
 
 #(3) Definition of interatomic potential
 pair_style hybrid/overlay eam/fs tabgap
-pair_coeff * * eam/fs Cr-Ta-V-W.eam.fs Cr Ta V W
-pair_coeff * * tabgap Cr-Ta-V-W.tabgap Cr Ta V W
+pair_coeff * * eam/fs ../../Cr-Ta-V-W.eam.fs W Ta Cr V
+pair_coeff * * tabgap ../../Cr-Ta-V-W.tabgap W Ta Cr V
 
 #(4) Functions
 
